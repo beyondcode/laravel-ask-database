@@ -1,0 +1,75 @@
+{
+    "name": "beyondcode/laravel-ask-database",
+    "description": "Use natural language and AI to query your database from Laravel",
+    "keywords": [
+        "beyondcode",
+        "laravel",
+        "laravel-ask-database"
+    ],
+    "homepage": "https://github.com/beyondcode/laravel-ask-database",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marcel Pociot",
+            "email": "marcel@beyondco.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "doctrine/dbal": "^3.6",
+        "illuminate/contracts": "^9.0",
+        "openai-php/laravel": "^0.3.1",
+        "spatie/laravel-package-tools": "^1.14.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "mockery/mockery": "^1.5",
+        "nunomaduro/collision": "^6.0",
+        "nunomaduro/larastan": "^2.0.1",
+        "orchestra/testbench": "^7.0",
+        "pestphp/pest": "^1.21",
+        "pestphp/pest-plugin-laravel": "^1.1",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "BeyondCode\\Oracle\\": "src",
+            "BeyondCode\\Oracle\\Database\\Factories\\": "database/factories"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BeyondCode\\Oracle\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BeyondCode\\Oracle\\OracleServiceProvider"
+            ],
+            "aliases": {
+                "Oracle": "BeyondCode\\Oracle\\Facades\\Oracle"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
