@@ -76,7 +76,8 @@ class Oracle
     protected function getRawQuery(string $query): string
     {
         if (version_compare(app()->version(), '10.0', '<')) {
-            return DB::raw($query);
+            /* @phpstan-ignore-next-line */
+            return (string)DB::raw($query);
         }
 
         return DB::raw($query)->getValue(DB::connection($this->connection)->getQueryGrammar());
