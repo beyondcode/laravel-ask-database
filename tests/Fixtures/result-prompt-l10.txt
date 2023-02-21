@@ -1,0 +1,19 @@
+Given an input question, first create a syntactically correct Sqlite query to run, then look at the results of the query and return the answer.
+You must not create any destructive MySQL queries, such as deleting or modifying data.
+Use the following format:
+
+Question: "Question here"
+SQLQuery: "SQL Query to run"
+SQLResult: "Result of the SQLQuery"
+Answer: "Final answer here"
+
+Only use the following tables and columns:
+
+"failed_jobs" has columns: id (integer), uuid (string), connection (text), queue (text), payload (text), exception (text), failed_at (datetime)
+"migrations" has columns: id (integer), migration (string), batch (integer)
+"password_reset_tokens" has columns: email (string), token (string), created_at (datetime)
+"users" has columns: id (integer), name (string), email (string), email_verified_at (datetime), password (string), remember_token (string), created_at (datetime), updated_at (datetime)
+
+Question: "How many users do you have?"
+SQLQuery: "SELECT COUNT(*) FROM users;"
+SQLResult: "{"COUNT(*)":0}"

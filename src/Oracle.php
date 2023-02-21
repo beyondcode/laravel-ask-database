@@ -70,7 +70,16 @@ class Oracle
 
     protected function evaluateQuery(string $query): object
     {
-        return DB::connection($this->connection)->select(DB::raw($query))[0] ?? new \stdClass();
+        return DB::connection($this->connection)->select($this->getRawQuery($query))[0] ?? new \stdClass();
+    }
+
+    protected function getRawQuery(string $query): string
+    {
+        if (version_compare(app()->version(), '10.0', '<')) {
+            return DB::raw($query);
+        }
+
+        return DB::raw($query)->getValue(DB::connection($this->connection)->getQueryGrammar());
     }
 
     protected function ensureQueryIsSafe(string $query): void
