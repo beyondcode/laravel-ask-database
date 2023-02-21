@@ -77,7 +77,7 @@ class Oracle
     {
         if (version_compare(app()->version(), '10.0', '<')) {
             /* @phpstan-ignore-next-line */
-            return (string)DB::raw($query);
+            return (string) DB::raw($query);
         }
 
         return DB::raw($query)->getValue(DB::connection($this->connection)->getQueryGrammar());
