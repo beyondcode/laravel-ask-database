@@ -12,7 +12,7 @@ Only use the following tables and columns:
 "{{ $table->getName() }}" has columns: {{ collect($table->getColumns())->map(fn(\Doctrine\DBAL\Schema\Column $column) => $column->getName() . ' ('.$column->getType()->getName().')')->implode(', ') }}
 @endforeach
 
-Question: "{!! $prompt  !!}"
+Question: "{!! $question  !!}"
 @if($query)
 SQLQuery: "{!! $query !!}"
 @endif

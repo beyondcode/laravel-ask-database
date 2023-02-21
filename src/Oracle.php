@@ -56,7 +56,7 @@ class Oracle
         $tables = $this->getTables($question);
 
         return (string) view('ask-database::prompts.query', [
-            'prompt' => $question,
+            'question' => $question,
             'tables' => $tables,
             'dialect' => $this->getDialect(),
             'query' => $query,
