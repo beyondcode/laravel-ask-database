@@ -7,6 +7,10 @@
 
 Ask DB allows you to use OpenAI's GPT-3 to build natural language database queries.
 
+```php
+DB::ask('How many users do we have on the "pro" plan?');
+```
+
 ## Installation
 
 You can install the package via composer:
