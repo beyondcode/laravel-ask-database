@@ -27,7 +27,6 @@ class Oracle
         $answer = $this->queryOpenAi($prompt, "\n", 0.7);
 
         return Str::of($answer)
-            ->after('Answer:')
             ->trim()
             ->trim('"');
     }
@@ -38,7 +37,6 @@ class Oracle
 
         $query = $this->queryOpenAi($prompt, "\n");
         $query = Str::of($query)
-            ->after('SQLQuery:')
             ->trim()
             ->trim('"');
 
