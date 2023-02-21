@@ -53,16 +53,12 @@ class Oracle
 
     public function buildPrompt(string $question, string $query = null, string $result = null): string
     {
-        $databasePlatform = DB::connection($this->connection)->getDoctrineConnection()->getDatabasePlatform();
-        $schemaManager = DB::connection($this->connection)->getDoctrineSchemaManager();
-        $dialect = Str::before(class_basename($databasePlatform), 'Platform');
-
-        $tables = $schemaManager->listTables();
+        $tables = $this->getTables($question);
 
         return (string) view('ask-database::prompts.query', [
             'prompt' => $question,
             'tables' => $tables,
-            'dialect' => $dialect,
+            'dialect' => $this->getDialect(),
             'query' => $query,
             'result' => $result,
         ]);
@@ -83,6 +79,9 @@ class Oracle
         return DB::raw($query)->getValue(DB::connection($this->connection)->getQueryGrammar());
     }
 
+    /**
+     * @throws PotentiallyUnsafeQuery
+     */
     protected function ensureQueryIsSafe(string $query): void
     {
         if (! config('ask-database.strict_mode')) {
@@ -92,5 +91,50 @@ class Oracle
         $query = strtolower($query);
         $forbiddenWords = ['insert', 'update', 'delete', 'alter', 'drop', 'truncate', 'create', 'replace'];
         throw_if(Str::contains($query, $forbiddenWords), PotentiallyUnsafeQuery::fromQuery($query));
+    }
+
+    protected function getDialect(): string
+    {
+        $databasePlatform = DB::connection($this->connection)->getDoctrineConnection()->getDatabasePlatform();
+
+        return Str::before(class_basename($databasePlatform), 'Platform');
+    }
+
+    /**
+     * @return \Doctrine\DBAL\Schema\Table[]
+     */
+    protected function getTables(string $question): array
+    {
+        return once(function () use ($question) {
+            $schemaManager = DB::connection($this->connection)->getDoctrineSchemaManager();
+
+            $tables = $schemaManager->listTables();
+
+            if (count($tables) < config('ask-database.max_tables_before_performing_lookup')) {
+                return $tables;
+            }
+
+            return $this->filterMatchingTables($question, $tables);
+        });
+    }
+
+    protected function filterMatchingTables(string $question, array $tables): array
+    {
+        $prompt = (string)view('ask-database::prompts.tables', [
+            'question' => $question,
+            'tables' => $tables,
+        ]);
+
+        $matchingTables = $this->queryOpenAi($prompt, "\n");
+
+        Str::of($matchingTables)
+            ->explode(",")
+            ->transform(fn (string $tableName) => trim($tableName))
+            ->filter()
+            ->each(function (string $tableName) use (&$tables) {
+                $tables = array_filter($tables, fn ($table) => strtolower($table->getName()) === strtolower($tableName));
+            });
+
+        return $tables;
     }
 }

@@ -37,6 +37,32 @@ it('can evaluate the returned query', function () {
     expect($query)->toBe('There are 0 users in the database.');
 });
 
+it('can query openai to find matching tables', function () {
+    config(['ask-database.max_tables_before_performing_lookup' => 1]);
+
+    $tablePrompt = version_compare(app()->version(), '10', '>=') ? 'table-prompt-l10.txt' : 'table-prompt.txt';
+
+    $client = mockClient('POST', 'completions', [[
+        'model' => 'text-davinci-003',
+        'prompt' => file_get_contents(__DIR__.'/Fixtures/'.$tablePrompt),
+    ], [
+        'model' => 'text-davinci-003',
+        'prompt' => file_get_contents(__DIR__.'/Fixtures/filtered-query-prompt.txt'),
+    ], [
+        'model' => 'text-davinci-003',
+        'prompt' => file_get_contents(__DIR__.'/Fixtures/filtered-result-prompt.txt'),
+    ]], [
+        completion('users,'),
+        completion('SELECT COUNT(*) FROM users;'),
+        completion('There are 0 users in the database.'),
+    ]);
+
+    $oracle = new Oracle($client);
+    $query = $oracle->ask('How many users do you have?');
+
+    expect($query)->toBe('There are 0 users in the database.');
+});
+
 it('throws an exception with strict mode enabled', function () {
     $fixture = version_compare(app()->version(), '10', '>=') ? 'query-prompt-l10.txt' : 'query-prompt.txt';
     $client = mockClient('POST', 'completions', [[
