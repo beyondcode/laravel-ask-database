@@ -21,7 +21,7 @@ class OracleServiceProvider extends PackageServiceProvider
         DB::macro('ask', function (string $question) {
             return $this->app->make(Oracle::class)->ask($question);
         });
-        DB::macro('askQuery', function (string $question) {
+        DB::macro('askForQuery', function (string $question) {
             return $this->app->make(Oracle::class)->getQuery($question);
         });
     }
