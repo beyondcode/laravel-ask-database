@@ -106,9 +106,9 @@ class Oracle
     protected function getTables(string $question): array
     {
         return once(function () use ($question) {
-            $schemaManager = DB::connection($this->connection)->getDoctrineSchemaManager();
-
-            $tables = $schemaManager->listTables();
+            $tables = DB::connection($this->connection)
+                ->getDoctrineSchemaManager()
+                ->listTables();
 
             if (count($tables) < config('ask-database.max_tables_before_performing_lookup')) {
                 return $tables;
