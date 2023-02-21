@@ -120,7 +120,7 @@ class Oracle
 
     protected function filterMatchingTables(string $question, array $tables): array
     {
-        $prompt = (string)view('ask-database::prompts.tables', [
+        $prompt = (string) view('ask-database::prompts.tables', [
             'question' => $question,
             'tables' => $tables,
         ]);
@@ -128,7 +128,7 @@ class Oracle
         $matchingTables = $this->queryOpenAi($prompt, "\n");
 
         Str::of($matchingTables)
-            ->explode(",")
+            ->explode(',')
             ->transform(fn (string $tableName) => trim($tableName))
             ->filter()
             ->each(function (string $tableName) use (&$tables) {
