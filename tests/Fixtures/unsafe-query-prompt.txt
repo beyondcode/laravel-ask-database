@@ -16,3 +16,4 @@ Only use the following tables and columns:
 Question: "How many users do you have?"
 SQLQuery: "DROP TABLE users;"
 SQLResult: "{"COUNT(*)":0}"
+Answer: "

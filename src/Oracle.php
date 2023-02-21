@@ -24,7 +24,12 @@ class Oracle
 
         $prompt = $this->buildPrompt($question, $query, $result);
 
-        return $this->queryOpenAi($prompt, "\n", 0.7);
+        $answer = $this->queryOpenAi($prompt, "\n", 0.7);
+
+        return Str::of($answer)
+            ->after('Answer:')
+            ->trim()
+            ->trim('"');
     }
 
     public function getQuery(string $question): string
@@ -32,6 +37,10 @@ class Oracle
         $prompt = $this->buildPrompt($question);
 
         $query = $this->queryOpenAi($prompt, "\n");
+        $query = Str::of($query)
+            ->after('SQLQuery:')
+            ->trim()
+            ->trim('"');
 
         $this->ensureQueryIsSafe($query);
 
@@ -55,13 +64,14 @@ class Oracle
     {
         $tables = $this->getTables($question);
 
-        return (string) view('ask-database::prompts.query', [
+        $prompt = (string) view('ask-database::prompts.query', [
             'question' => $question,
             'tables' => $tables,
             'dialect' => $this->getDialect(),
             'query' => $query,
             'result' => $result,
         ]);
+        return rtrim($prompt, PHP_EOL);
     }
 
     protected function evaluateQuery(string $query): object
@@ -124,6 +134,7 @@ class Oracle
             'question' => $question,
             'tables' => $tables,
         ]);
+        $prompt = rtrim($prompt, PHP_EOL);
 
         $matchingTables = $this->queryOpenAi($prompt, "\n");
 

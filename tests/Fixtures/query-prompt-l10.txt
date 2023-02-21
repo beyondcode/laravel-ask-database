@@ -14,3 +14,4 @@ Only use the following tables and columns:
 "users" has columns: id (integer), name (string), email (string), email_verified_at (datetime), password (string), remember_token (string), created_at (datetime), updated_at (datetime)
 
 Question: "How many users do you have?"
+SQLQuery: "

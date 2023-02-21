@@ -13,9 +13,8 @@ Only use the following tables and columns:
 @endforeach
 
 Question: "{!! $question  !!}"
-@if($query)
-SQLQuery: "{!! $query !!}"
+SQLQuery: "@if($query){!! $query !!}"
+SQLResult: "@if($result){!! $result !!}"
+Answer: "
 @endif
-@if($result)
-SQLResult: "{!! $result !!}"
 @endif
