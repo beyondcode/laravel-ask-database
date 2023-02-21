@@ -69,6 +69,7 @@ class Oracle
             'query' => $query,
             'result' => $result,
         ]);
+
         return rtrim($prompt, PHP_EOL);
     }
 
