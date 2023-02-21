@@ -18,7 +18,7 @@ composer require beyondcode/laravel-ask-database
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-ask-database-config"
+php artisan vendor:publish --tag="ask-database-config"
 ```
 
 This is the contents of the published config file:

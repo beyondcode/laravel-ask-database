@@ -19,7 +19,10 @@ class OracleServiceProvider extends PackageServiceProvider
     public function registeringPackage()
     {
         DB::macro('ask', function (string $question) {
-            $this->app->make(Oracle::class)->ask($question);
+            return $this->app->make(Oracle::class)->ask($question);
+        });
+        DB::macro('askQuery', function (string $question) {
+            return $this->app->make(Oracle::class)->getQuery($question);
         });
     }
 }
