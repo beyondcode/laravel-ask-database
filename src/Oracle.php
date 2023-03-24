@@ -135,16 +135,14 @@ class Oracle
         ]);
         $prompt = rtrim($prompt, PHP_EOL);
 
-        $matchingTables = $this->queryOpenAi($prompt, "\n");
+        $matchingTablesResult = $this->queryOpenAi($prompt, "\n");
 
-        Str::of($matchingTables)
+        $matchingTables = Str::of($matchingTablesResult)
             ->explode(',')
-            ->transform(fn (string $tableName) => trim($tableName))
-            ->filter()
-            ->each(function (string $tableName) use (&$tables) {
-                $tables = array_filter($tables, fn ($table) => strtolower($table->getName()) === strtolower($tableName));
-            });
+            ->transform(fn (string $tableName) => strtolower(trim($tableName)));
 
-        return $tables;
+        return collect($tables)->filter(function ($table) use ($matchingTables) {
+            return $matchingTables->contains(strtolower($table->getName()));
+        })->toArray();
     }
 }
