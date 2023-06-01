@@ -98,7 +98,7 @@ class Oracle
         }
 
         $query = strtolower($query);
-        $forbiddenWords = ['insert', 'update', 'delete', 'alter', 'drop', 'truncate', 'create', 'replace'];
+        $forbiddenWords = ['insert', 'update ', 'delete ', 'alter', 'drop', 'truncate', 'create ', 'replace'];
         throw_if(Str::contains($query, $forbiddenWords), PotentiallyUnsafeQuery::fromQuery($query));
     }
 
