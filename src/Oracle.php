@@ -16,7 +16,7 @@ class Oracle
         $this->connection = config('ask-database.connection');
     }
 
-    public function ask(string $question): string
+    public function ask(string $question, bool $withQuery = false): string|object
     {
         $query = $this->getQuery($question);
 
@@ -26,9 +26,18 @@ class Oracle
 
         $answer = $this->queryOpenAi($prompt, "\n", 0.7);
 
-        return Str::of($answer)
-            ->trim()
-            ->trim('"');
+        if ($withQuery == false) {
+            return Str::of($answer)
+                ->trim()
+                ->trim('"');
+        }
+
+        return (object) [
+            'query' => $query,
+            'result' => Str::of($answer)
+                ->trim()
+                ->trim('"')
+        ];
     }
 
     public function getQuery(string $question): string
