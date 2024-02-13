@@ -9,7 +9,7 @@ Answer: "Final answer here"
 Only use the following tables and columns:
 
 @foreach($tables as $table)
-"{{ $table->getName() }}" has columns: {{ collect($table->getColumns())->map(fn(\Doctrine\DBAL\Schema\Column $column) => $column->getName() . ' ('.$column->getType()->getName().')')->implode(', ') }}
+"{{ $table }}" has columns: {{ collect(\Illuminate\Support\Facades\Schema::getColumns($table))->map(fn(array $column) => $column['name'] . ' ('.$column['type_name'].')')->implode(', ') }}
 @endforeach
 
 Question: "{!! $question  !!}"

@@ -4,6 +4,7 @@ namespace BeyondCode\Oracle;
 
 use BeyondCode\Oracle\Exceptions\PotentiallyUnsafeQuery;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use OpenAI\Client;
 
@@ -104,20 +105,22 @@ class Oracle
 
     protected function getDialect(): string
     {
-        $databasePlatform = DB::connection($this->connection)->getDoctrineConnection()->getDatabasePlatform();
+        $connection = DB::connection($this->connection);
 
-        return Str::before(class_basename($databasePlatform), 'Platform');
+        return match (true) {
+            $connection instanceof \Illuminate\Database\MySqlConnection && $connection->isMaria() => 'MariaDB',
+            $connection instanceof \Illuminate\Database\MySqlConnection => 'MySQL',
+            $connection instanceof \Illuminate\Database\PostgresConnection => 'PostgreSQL',
+            $connection instanceof \Illuminate\Database\SQLiteConnection => 'SQLite',
+            $connection instanceof \Illuminate\Database\SqlServerConnection => 'SQL Server',
+            default => $connection->getDriverName(),
+        };
     }
 
-    /**
-     * @return \Doctrine\DBAL\Schema\Table[]
-     */
     protected function getTables(string $question): array
     {
         return once(function () use ($question) {
-            $tables = DB::connection($this->connection)
-                ->getDoctrineSchemaManager()
-                ->listTables();
+            $tables = Schema::connection($this->connection)->getTableListing();
 
             if (count($tables) < config('ask-database.max_tables_before_performing_lookup')) {
                 return $tables;
@@ -142,7 +145,7 @@ class Oracle
             ->transform(fn (string $tableName) => strtolower(trim($tableName)));
 
         return collect($tables)->filter(function ($table) use ($matchingTables) {
-            return $matchingTables->contains(strtolower($table->getName()));
+            return $matchingTables->contains(strtolower($table));
         })->toArray();
     }
 }
