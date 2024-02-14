@@ -59,7 +59,7 @@ class Oracle
         return $completions->choices[0]->text;
     }
 
-    protected function buildPrompt(string $question, string $query = null, string $result = null): string
+    protected function buildPrompt(string $question, ?string $query = null, ?string $result = null): string
     {
         $tables = $this->getTables($question);
 
