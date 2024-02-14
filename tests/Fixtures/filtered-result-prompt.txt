@@ -1,4 +1,4 @@
-Given an input question, first create a syntactically correct Sqlite query to run, then look at the results of the query and return the answer.
+Given an input question, first create a syntactically correct SQLite query to run, then look at the results of the query and return the answer.
 Use the following format:
 
 Question: "Question here"
@@ -8,7 +8,7 @@ Answer: "Final answer here"
 
 Only use the following tables and columns:
 
-"users" has columns: id (integer), name (string), email (string), email_verified_at (datetime), password (string), remember_token (string), created_at (datetime), updated_at (datetime)
+"users" has columns: id (integer), name (varchar), email (varchar), email_verified_at (datetime), password (varchar), remember_token (varchar), created_at (datetime), updated_at (datetime)
 
 Question: "How many users do you have?"
 SQLQuery: "SELECT COUNT(*) FROM users;"
